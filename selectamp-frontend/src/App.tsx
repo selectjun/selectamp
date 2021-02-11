@@ -1,25 +1,45 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Route, Switch } from "react-router-dom";
+import AppLayout from './components/AppLayout'; 
+import Header from './components/Header';
+import Side from './components/Side';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Switch>
+        <AppLayout>
+          <AppLayout.Header><Header /></AppLayout.Header>
+          <AppLayout.Side><Side /></AppLayout.Side>
+          <AppLayout.Main>
+            <Route path="/" exact>
+              <div>GET /</div>
+            </Route>
+            <Route path="/dashboard">
+              <div>GET /dashboard</div>
+            </Route>
+            <Route path="/course">
+              <div>GET /course</div>
+            </Route>
+            <Route path="/pamphlet">
+              <div>GET /pamphlet</div>
+            </Route>
+            <Route path="/location">
+              <div>GET /location</div>
+            </Route>
+            <Route path="/board">
+              <div>GET /board</div>
+            </Route>
+            <Route path="/guide">
+              <div>GET /guide</div>
+            </Route>
+            <Route path="/notice">
+              <div>GET /notice</div>
+            </Route>
+          </AppLayout.Main>
+        </AppLayout>
+      </Switch>
+    </>
   );
 }
 
