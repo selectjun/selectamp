@@ -25,21 +25,6 @@ const sideStyle = css`
 
     li {
       margin-top: 1rem;
-      padding-left: 1.625rem;
-      padding-top: 0.75rem;
-      padding-bottom: 0.75rem;
-
-      &:hover {
-        background: #b4dbee;
-        border-top-right-radius: 1rem;
-        border-bottom-right-radius: 1rem;
-      }
-
-      &.on {
-        background: #b4dbff;
-        border-top-right-radius: 1rem;
-        border-bottom-right-radius: 1rem;
-      }
     }
   }
 `;
