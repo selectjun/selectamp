@@ -1,9 +1,11 @@
+import { css } from '@emotion/react';
+
 export type AppLayoutProps = {
   children: React.ReactNode
 };
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  return <div>{children}</div>
+  return <div css={appLayoutStyle}>{children}</div>
 };
 
 export type HeaderProps = {
@@ -11,7 +13,7 @@ export type HeaderProps = {
 };
 
 function Header({ children }: HeaderProps) {
-  return <header>{children}</header>
+  return <header css={headerStyle}>{children}</header>
 };
 
 export type SideProps = {
@@ -19,7 +21,7 @@ export type SideProps = {
 };
 
 function Side({ children }: SideProps) {
-  return <aside>{children}</aside>
+  return <aside css={sideStyle}>{children}</aside>
 };
 
 export type MainProps = {
@@ -27,9 +29,32 @@ export type MainProps = {
 };
 
 function Main({ children }: MainProps) {
-  return <main>{children}</main>
+  return <main css={mainStyle}>{children}</main>
 };
 
 AppLayout.Header = Header;
 AppLayout.Side = Side;
 AppLayout.Main = Main;
+
+const appLayoutStyle = css`
+  width: 100%;
+  height: 100%;
+`;
+
+const headerStyle = css`
+  width: 100%;
+  height: 4.5rem;
+  background: #005CB2;
+`;
+
+const sideStyle = css`
+  width: 15rem;
+  height: calc(100% - 4.5rem);
+  float: left;
+`;
+
+const mainStyle = css`
+  width: calc(100% - 15rem);
+  height: calc(100% - 4.5rem);
+  float: left;
+`;
