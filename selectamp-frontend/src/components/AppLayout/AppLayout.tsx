@@ -45,16 +45,21 @@ const headerStyle = css`
   width: 100%;
   height: 4.5rem;
   background: #005CB2;
+  position: fixed;
+  top: 0;
+  left: 0;
 `;
 
 const sideStyle = css`
   width: 15rem;
   height: calc(100% - 4.5rem);
-  float: left;
+  position: fixed;
+  left: 0;
+  top: 4.5rem;
 `;
 
 const mainStyle = css`
   width: calc(100% - 15rem);
-  height: calc(100% - 4.5rem);
-  float: left;
+  margin-top: 4.5rem;
+  margin-left: 15rem;
 `;

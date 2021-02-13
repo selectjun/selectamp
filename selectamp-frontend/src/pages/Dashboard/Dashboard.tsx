@@ -13,7 +13,8 @@ export default function Dashboard({}: DashboardProps) {
 
 const dashboardStyle = css`
   width: 60rem;
-  margin: 4.5rem auto 0;
+  margin: 0 auto;
+  padding-top: 2rem;
 
   .page-title {
     padding-left: 1.25rem;
