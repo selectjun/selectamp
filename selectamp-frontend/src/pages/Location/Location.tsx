@@ -6,10 +6,10 @@ export type LocationProps = {};
 export default function Location({}: LocationProps) {
   return (
     <PageTemplete>
-    <section css={locationStyle}>
-      <h2 className="page-title">Location</h2>
-      <hr />
-    </section>
+      <section css={locationStyle}>
+        <h2 className="page-title">Location</h2>
+        <hr />
+      </section>
     </PageTemplete>
   );
 };
