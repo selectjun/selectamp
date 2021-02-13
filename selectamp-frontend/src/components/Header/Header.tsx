@@ -11,8 +11,8 @@ export default function Header() {
     <div css={headerStyle}>
       <h1>selectamp</h1>
       <div className="user-profile" onClick={onClickUserProfile}>
-          <span className="user-profile-image"></span>
-          <span className="user-profile-name">selectjun</span>
+        <span className="user-profile-image"></span>
+        <span className="user-profile-name">selectjun</span>
       </div>
       <ProfileMenu isVisible={isVisible} />
     </div>

@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
+import PageTemplete from '../../components/Base/PageTemplete';
 
 export type GuideProps = {};
 
 export default function Guide({}: GuideProps) {
   return (
-    <section css={guideStyle}>
-      <h2 className="page-title">Guide</h2>
-      <hr />
-    </section>
+    <PageTemplete>
+      <section css={guideStyle}>
+        <h2 className="page-title">Guide</h2>
+        <hr />
+      </section>
+    </PageTemplete>
   );
 };
 

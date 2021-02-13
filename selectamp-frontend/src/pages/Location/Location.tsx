@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
+import PageTemplete from '../../components/Base/PageTemplete';
 
 export type LocationProps = {};
 
 export default function Location({}: LocationProps) {
   return (
+    <PageTemplete>
     <section css={locationStyle}>
       <h2 className="page-title">Location</h2>
       <hr />
     </section>
+    </PageTemplete>
   );
 };
 

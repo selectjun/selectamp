@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
+import PageTemplete from '../../components/Base/PageTemplete';
 
 export type NoticeProps = {};
 
 export default function Notice({}: NoticeProps) {
   return (
-    <section css={noticeStyle}>
-      <h2 className="page-title">Notice</h2>
-      <hr />
-    </section>
+    <PageTemplete>
+      <section css={noticeStyle}>
+        <h2 className="page-title">Notice</h2>
+        <hr />
+      </section>
+    </PageTemplete>
   );
 };
 

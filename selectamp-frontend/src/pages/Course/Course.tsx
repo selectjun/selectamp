@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
+import PageTemplete from '../../components/Base/PageTemplete';
 
 export type CourseProps = {};
 
 export default function Course({}: CourseProps) {
   return (
-    <section css={courseStyle}>
-      <h2 className="page-title">Course</h2>
-      <hr />
-    </section>
+    <PageTemplete>
+      <section css={courseStyle}>
+        <h2 className="page-title">Course</h2>
+        <hr />
+      </section>
+    </PageTemplete>
   );
 };
 
