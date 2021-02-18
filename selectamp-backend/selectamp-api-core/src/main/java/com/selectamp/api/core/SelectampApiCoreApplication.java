@@ -1,13 +1,13 @@
-package com.selectamp.www;
+package com.selectamp.api.core;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SelectampApplication {
+public class SelectampApiCoreApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SelectampApplication.class, args);
+        SpringApplication.run(SelectampApiCoreApplication.class, args);
     }
 
 }
