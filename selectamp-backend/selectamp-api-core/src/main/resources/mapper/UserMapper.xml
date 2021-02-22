@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selectamp.api.core.mapper.UserMapper">
+
+    <insert id="save" parameterType="com.selectamp.api.core.domain.UserEntity">
+        INSERT INTO user (
+            id
+            , password
+            , name
+            , email
+            , create_at
+            , update_at
+            , last_login_at
+            , password_last_change_at
+            , login_failed_count
+            , is_agree
+        ) VALUES (
+            #{id}
+            , #{password}
+            , #{name}
+            , #{email}
+            , NOW()
+            , NOW()
+            , NOW()
+            , NOW()
+            , #{loginFailedCount}
+            , #{isAgree}
+        )
+    </insert>
+
+    <select id="countById" parameterType="java.lang.String" resultType="long">
+        SELECT
+            COUNT(*)
+        FROM
+            user
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <select id="findById" resultType="com.selectamp.api.core.domain.UserDto"></select>
+
+</mapper>

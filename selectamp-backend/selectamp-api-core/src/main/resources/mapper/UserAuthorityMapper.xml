@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selectamp.api.core.mapper.UserAuthorityMapper">
+
+    <insert id="save" parameterType="com.selectamp.api.core.domain.UserAuthorityEntity">
+        INSERT INTO user_authority (
+            user_id
+            , authority_name
+        ) values (
+            #{userId}
+            , #{authorityName}
+        );
+    </insert>
+
+    <select id="findByUserId" parameterType="String" resultType="com.selectamp.api.core.domain.UserAuthorityEntity">
+        SELECT
+            user_id
+            , authority_name
+        FROM
+            user_authority
+        <where>
+            user_id = #{userId}
+        </where>
+    </select>
+
+    <select id="findAuthorityNameByUserId" parameterType="String" resultType="java.lang.String">
+        SELECT
+            authority_name
+        FROM
+            user_authority
+        <where>
+            user_id = #{userI`d}
+        </where>
+    </select>
+
+</mapper>

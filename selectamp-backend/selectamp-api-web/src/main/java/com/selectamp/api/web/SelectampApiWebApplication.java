@@ -3,7 +3,7 @@ package com.selectamp.api.web;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.selectamp")
+@SpringBootApplication(scanBasePackages = "com.selectamp.api")
 public class SelectampApiWebApplication {
 
     public static void main(String[] args) {
