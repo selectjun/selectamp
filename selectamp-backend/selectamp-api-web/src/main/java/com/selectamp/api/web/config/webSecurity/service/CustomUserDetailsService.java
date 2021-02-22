@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserDto userDto = new UserDto();
         userDto = userDto.toUserDto(userMapper.findById(username));
         userDto.setRoles(userAuthorityMapper.findAuthorityNameByUserId(username));
-        return null;
+        return userDto;
     }
 
 }
