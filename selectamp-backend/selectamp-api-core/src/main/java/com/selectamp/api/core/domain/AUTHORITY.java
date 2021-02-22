@@ -19,4 +19,5 @@ public class AUTHORITY {
      * 권한설명
      */
     private String description;
+
 }

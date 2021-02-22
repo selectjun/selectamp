@@ -2,6 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.selectamp.api.core.mapper.UserMapper">
 
+    <select id="findById" parameterType="String" resultType="com.selectamp.api.core.domain.UserEntity">
+        SELECT
+            id
+            , password
+            , name
+            , email
+            , create_at
+            , update_at
+            , last_login_at
+            , password_last_change_at
+            , login_failed_count
+            , is_agree
+        FROM
+            user
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
     <insert id="save" parameterType="com.selectamp.api.core.domain.UserEntity">
         INSERT INTO user (
             id
@@ -37,7 +56,5 @@
             id = #{id}
         </where>
     </select>
-
-    <select id="findById" resultType="com.selectamp.api.core.domain.UserDto"></select>
 
 </mapper>

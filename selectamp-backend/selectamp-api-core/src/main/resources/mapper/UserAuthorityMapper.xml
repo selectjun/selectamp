@@ -29,7 +29,7 @@
         FROM
             user_authority
         <where>
-            user_id = #{userI`d}
+            user_id = #{userId}
         </where>
     </select>
 
