@@ -29,7 +29,7 @@ export type MainProps = {
 };
 
 function Main({ children }: MainProps) {
-  return <main css={mainStyle}>{children}</main>
+  return <main css={mainStyle}><section>{children}</section></main>
 };
 
 AppLayout.Header = Header;
@@ -62,4 +62,10 @@ const mainStyle = css`
   width: calc(100% - 15rem);
   margin-top: 4.5rem;
   margin-left: 15rem;
+
+  section {
+    width: 60rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+  }
 `;
