@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { css } from '@emotion/react';
 import ProfileMenuItem from '../ProfileMenuItem';
 
@@ -7,14 +7,18 @@ export type ProfileMenuProps = {
 };
 
 export default function ProfileMenu({ isVisible }: ProfileMenuProps) {
+  const history = useHistory();
+
   return (
     isVisible
     ? <div css={profileMenuStyle}>
         <ul className="profile-menu-list">
           <ProfileMenuItem type="link" to="/dashboard" text={"회원정보"} />
           <ProfileMenuItem type="button" text={"LOGOUT"} callback={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-            console.log(e.target);
-            if (window.confirm("정말로 로그아웃 하시겠습니까?")) { alert("로그아웃 되었습니다!"); }
+            if (window.confirm("정말로 로그아웃 하시겠습니까?")) {
+              sessionStorage.removeItem("xAuthToken");
+              history.push("/login");
+            }
           }} />
         </ul>
       </div>
