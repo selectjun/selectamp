@@ -3,16 +3,18 @@ import { css } from '@emotion/react';
 export type InputProps = {
   type: string,
   name: string,
+  value?: string
   placeholder: string,
   handleLoginData: (name: string, value: string) => void
 };
 
-export default function Input({ type, name, placeholder, handleLoginData }: InputProps) {
+export default function Input({ type, name, value, placeholder, handleLoginData }: InputProps) {
   return (
     <div className="input-box" css={inputStyle}>
       <input
         type={type}
         name={name}
+        value={value}
         className="input-type-text"
         placeholder={placeholder}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginData(e.target.name, e.target.value)} />

@@ -1,11 +1,11 @@
 import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 
-export type UtilsProps = {};
+export type VariousLinkProps = {};
 
-export default function Utils({}: UtilsProps) {
+export default function VariousLink({}: VariousLinkProps) {
   return (
-    <div className="user-utils" css={utilsStyle}>
+    <div className="user-utils" css={variousLinkStyle}>
       <Link to="">FIND ID</Link>
       <Link to="">FIND PASSWORD</Link>
       <Link to="">JOIN</Link>
@@ -13,7 +13,7 @@ export default function Utils({}: UtilsProps) {
   );
 };
 
-const utilsStyle = css`
+const variousLinkStyle = css`
   width: 100%;
   text-align: center;
   margin-top: 2rem;

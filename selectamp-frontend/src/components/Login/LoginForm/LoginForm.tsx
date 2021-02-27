@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import { Link, useHistory } from 'react-router-dom';
 import { sha256 } from 'js-sha256';
 import { API } from '../../axios';
 import Input from '../Input';
 import Utils from '../Utils';
+import VariousLink from '../VariousLink';
 
 export type LoginFormProps = {};
 export type loginDataType = {
@@ -30,9 +31,17 @@ export default function LoginForm({}: LoginFormProps) {
     });
   };
 
+  const handleIsSaveId = (isSaveId: boolean) => {
+    setLoginData({
+      ...loginData,
+      isSaveId: isSaveId
+    });
+  };
+
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: 아이디 저장 로직 추가(쿠키 이용)
+
+    localStorage.setItem("id", loginData.isSaveId ? loginData.id : "");
     if (!loginData.id) {
       setResultTxt("아이디를 입력해주세요");
       document.getElementsByName("id")[0].focus();
@@ -49,6 +58,15 @@ export default function LoginForm({}: LoginFormProps) {
     }
   };
 
+  useEffect(() => {
+    const id: string | null = localStorage.getItem("id");
+    setLoginData({
+      ...loginData,
+      id: id ? id : "",
+      isSaveId: id ? true : false
+    });
+  }, []);
+
   return (
     <section css={loginFormStyle}>
       <form onSubmit={handleFormSubmit}>
@@ -57,11 +75,13 @@ export default function LoginForm({}: LoginFormProps) {
           <Input 
             type="text"
             name="id"
+            value={loginData.id}
             placeholder="ID"
             handleLoginData={handleLoginData} />
           <Input 
             type="password"
             name="password"
+            value={loginData.password}
             placeholder="PASSWORD"
             handleLoginData={handleLoginData} />
           <div className="result-txt">{resultTxt}</div>
@@ -69,9 +89,12 @@ export default function LoginForm({}: LoginFormProps) {
             type="submit"
             className="input-type-submit"
             value="LOGIN" />
+          <Utils
+            isSaveId={loginData.isSaveId}
+            handleIsSaveId={handleIsSaveId} />
         </fieldset>
       </form>
-      <Utils />
+      <VariousLink />
     </section>
   );
 };
@@ -102,12 +125,13 @@ const loginFormStyle = css`
     div.result-txt {
       color: red;
       text-indent: 0.25rem;
+      margin-bottom: 0.75rem;
     }
     
     input.input-type-submit {
       width: 100%;
       height: 3.375rem;
-      margin: 0.75rem 0 0;
+      margin: 0 0 0;
       padding: 0;
       color: #fff;
       background: #005CB2;

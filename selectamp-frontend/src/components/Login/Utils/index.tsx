@@ -1,1 +1,1 @@
-export { default } from './Uitls';
+export { default } from './Utils';
