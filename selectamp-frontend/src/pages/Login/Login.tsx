@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useRef, useState } from 'react'; 
 import { css } from '@emotion/react';
 import { Link, useHistory } from 'react-router-dom';
 import { sha256 } from 'js-sha256';
@@ -14,12 +14,16 @@ export type loginDataType = {
 
 export default function Login({}: LoginProps) {
   const history = useHistory();
+
   const [resultTxt, setResultTxt] = useState<string>("");
   const [loginData, setLoginData] = useState<loginDataType>({
     id: "",
     password: "",
     isSaveId: false
   });
+
+  const idInputRef = useRef<HTMLInputElement>(null);
+  const passwordIInputRef = useRef<HTMLInputElement>(null);
 
   const handleLoginData = (name: string, value: string) => {
     setLoginData({
@@ -32,16 +36,18 @@ export default function Login({}: LoginProps) {
     e.preventDefault();
     // TODO: 아이디 저장 로직 추가(쿠키 이용)
     if (!loginData.id) {
-      alert("아이디를 입력해주세요");
+      setResultTxt("아이디를 입력해주세요");
+      idInputRef.current?.focus();
     } else if (!loginData.password) {
-      alert("암호를 입력해주세요");
+      setResultTxt("암호를 입력해주세요");
+      passwordIInputRef.current?.focus();
     } else {
-      console.log(sha256(loginData.password));
       const url = `/api/token/?id=${loginData.id}&password=${sha256(loginData.password)}`;
       API.post(url).then(response => {
         history.push("/dashboard")
       }).catch(error => {
         setResultTxt(error.response.data.message);
+        idInputRef.current?.focus();
       });
     }
   };
@@ -58,6 +64,7 @@ export default function Login({}: LoginProps) {
                 name="id"
                 className="input-type-text"
                 placeholder="ID"
+                ref={idInputRef}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginData(e.target.name, e.target.value)} />
             </div>
             <div className="input-box">
@@ -66,6 +73,7 @@ export default function Login({}: LoginProps) {
                 name="password"
                 className="input-type-text"
                 placeholder="PASSWORD"
+                ref={passwordIInputRef}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleLoginData(e.target.name, e.target.value)} />
             </div>
             <div className="result-txt">{resultTxt}</div>
