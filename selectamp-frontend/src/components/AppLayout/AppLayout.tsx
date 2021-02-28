@@ -62,6 +62,7 @@ const mainStyle = css`
   width: calc(100% - 15rem);
   margin-top: 4.5rem;
   margin-left: 15rem;
+  padding-bottom: 4.5rem;
 
   section {
     width: 60rem;
