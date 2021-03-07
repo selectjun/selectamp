@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selectamp.api.core.mapper.CommunityMapper">
+
+    <insert id="save" parameterType="com.selectamp.api.core.domain.CommunityEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO community (
+            id
+            , community_kinds_code_name
+            , title
+            , contents
+            , view_count
+            , is_open
+            , is_temp
+            , user_id
+            , create_at
+            , update_at
+        ) values (
+             #{id}
+             , #{communityKindsCodeName}
+             , #{title}
+             , #{contents}
+             , #{viewCount}
+             , #{isOpen}
+             , #{isTemp}
+             , #{userId}
+             , NOW()
+             , NOW()
+         )
+    </insert>
+
+</mapper>

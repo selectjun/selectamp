@@ -3,20 +3,15 @@ package com.selectamp.api.core.domain;
 import lombok.Data;
 
 @Data
-public class AUTHORITY {
+public class CommunityKindsCodeEntity {
 
     /**
-     * 권한코드명(PK)
+     * 커뮤니티_코드_이름
      */
     private String name;
 
     /**
-     * 구분(USER|ADMIN)
-     */
-    private String kinds;
-
-    /**
-     * 권한설명
+     * 커뮤니티_코드_설명
      */
     private String description;
 
