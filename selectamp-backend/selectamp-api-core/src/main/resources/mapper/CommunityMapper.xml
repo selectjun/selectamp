@@ -28,4 +28,79 @@
          )
     </insert>
 
+    <update id="modify" parameterType="com.selectamp.api.core.domain.CommunityEntity" useGeneratedKeys="true" keyProperty="id">
+        UPDATE
+            community
+        SET
+            community_kinds_code_name = #{communityKindsCodeName}
+            , title = #{title}
+            , contents = #{contents}
+            , is_open = #{isOpen}
+            , is_temp = #{isTemp}
+            , update_at = NOW()
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <update id="increaseViewCount" parameterType="long">
+        UPDATE
+            community
+        SET
+            view_count = view_count + 1
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <select id="findAll" parameterType="long" resultType="com.selectamp.api.core.domain.CommunityEntity">
+        SELECT
+            id
+             , community_kinds_code_name
+             , title
+             , contents
+             , view_count
+             , is_open
+             , is_temp
+             , user_id
+             , create_at
+             , update_at
+        FROM
+            community
+        <where>
+            is_temp = false
+        </where>
+        LIMIT
+            #{startId}, #{countPerPage}
+    </select>
+
+    <select id="findById" parameterType="long" resultType="com.selectamp.api.core.domain.CommunityEntity">
+        SELECT
+            id
+            , community_kinds_code_name
+            , title
+            , contents  
+            , view_count
+            , is_open
+            , is_temp
+            , user_id
+            , create_at
+            , update_at
+        FROM
+            community
+        <where>
+            id = #{id}
+        </where>
+    </select>
+
+    <select id="countAll" resultType="long">
+        SELECT
+            COUNT(*)
+        FROM
+            community
+        <where>
+            is_temp = false
+        </where>
+    </select>
+
 </mapper>

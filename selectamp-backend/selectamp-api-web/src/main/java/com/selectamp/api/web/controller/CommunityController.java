@@ -1,18 +1,15 @@
 package com.selectamp.api.web.controller;
 
 import com.selectamp.api.core.domain.CommunityEntity;
-import com.selectamp.api.core.domain.CommunityKindsCodeEntity;
 import com.selectamp.api.core.service.CommunityKindsCodeService;
 import com.selectamp.api.core.service.CommunityService;
 import com.selectamp.api.core.util.ValidationProvider;
 import com.selectamp.api.web.config.webSecurity.service.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -44,11 +41,126 @@ public class CommunityController {
      */
     private final ValidationProvider validationProvider;
 
+    /**
+     * 페이지 당 갯수
+     */
+    private Long countPerPage = 20L;
+
+
+    /**
+     * 커뮤니티 목록 조회
+     * @param page  현재 페이지
+     * @return      커뮤니티 목록
+     */
     @GetMapping("/")
-    public String communication() {
-        return "GET /api/communication/";
+    public ResponseEntity<Object> communication(@RequestParam(value = "page", required = false, defaultValue = "1") Long page) {
+        Map<String, Object> response = new HashMap<>();
+        Long startId = (page - 1) * countPerPage;
+
+        try {
+            response.put("success", true);
+            response.put("page", page);
+            response.put("countPerPage", countPerPage);
+            response.put("totalCount", communityService.countCommunity());
+            response.put("communities", communityService.getCommunityList(startId, countPerPage));
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 
+    /**
+     * 커뮤니티 수정
+     * @param communityEntity       커뮤니티 객체
+     * @param errors                유효성 객체
+     * @param id                    커뮤니티 아이디
+     * @param httpServletRequest    요청 객체
+     * @return                      커뮤니티 수정 여부
+     */
+    @PutMapping("/{id}/")
+    public ResponseEntity<Object> modify(@Valid CommunityEntity communityEntity, Errors errors,
+                                         @PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
+        Map<String, Object> response = new HashMap<>();
+
+        // 유효성 체크
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(validationProvider.valid(errors));
+        }
+
+        // 게시물 존재 여부 확인
+        if (id == null) {
+            response.put("success", false);
+            response.put("message", "게시물이 존재하지 않습니다");
+            return ResponseEntity.badRequest().body(response);
+        }
+        communityEntity.setId(id);
+
+        // 사용자 조회
+        String token = jwtTokenProvider.resolveToken(httpServletRequest);
+        String userId = jwtTokenProvider.getUserPk(token);
+        if (userId.equals("") && userId == null) {
+            response.put("success", false);
+            response.put("message", "사용자가 존재하지 않습니다");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // 수정 권한 확인
+        if (!communityService.isModify(communityEntity.getId(), userId)) {
+            response.put("success", false);
+            response.put("message", "수정 권한이 없습니다");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // 커뮤니티 코드 확인
+        if (!communityKindsCodeService.isCommunityKindsCode(communityEntity.getCommunityKindsCodeName())) {
+            response.put("success", false);
+            response.put("message", "코드가 존재하지 않습니다");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // 수정
+        if (communityService.modifyCommunity(communityEntity) == null) {
+            response.put("success", false);
+            response.put("message", "등록에 실패하였습니다");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        response.put("success", true);
+        response.put("id", id);
+        response.put("message", "수정하였습니다");
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 조회수 증가
+     * @return  성공여부
+     */
+    @PutMapping("/{id}/viewCount/")
+    public ResponseEntity<Object> increaseViewCount(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            communityService.increaseViewCount(id);
+            response.put("success", true);
+            response.put("message", "성공하였습니다");
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 커뮤니티 등록
+     * @param communityEntity       커뮤니티 객체
+     * @param errors                유효성 객체
+     * @param httpServletRequest    요청 객체
+     * @return                      등록 성공 여부
+     */
     @PostMapping("/")
     public ResponseEntity<Object> write(@Valid CommunityEntity communityEntity, Errors errors,
                                         HttpServletRequest httpServletRequest) {
@@ -78,7 +190,7 @@ public class CommunityController {
         }
 
         // 등록
-        Long id = communityService.save(communityEntity);
+        Long id = communityService.insertCommunity(communityEntity);
         if (id == null) {
             response.put("success", false);
             response.put("message", "등록에 실패하였습니다");
