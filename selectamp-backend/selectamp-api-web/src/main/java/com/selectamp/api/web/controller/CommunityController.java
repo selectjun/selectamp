@@ -205,4 +205,25 @@ public class CommunityController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * 커뮤니티 코드 목록 조회
+     * @return  커뮤니티 코드 목록
+     */
+    @GetMapping("/communityKindsCodeName/")
+    public ResponseEntity<Object> getCommunityKindsCodeNameLList() {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            response.put("success", true);
+            response.put("communityKindsCodeNames", communityKindsCodeService.getCommunityKindsCodeList());
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다.");
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }

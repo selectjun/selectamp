@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.selectamp.api.core.mapper.CommunityKindsCodeMapper">
 
+    <select id="findAll" resultType="com.selectamp.api.core.domain.CommunityKindsCodeEntity">
+        SELECT
+            name
+            , description
+        FROM
+            community_kinds_code
+    </select>
+
     <select id="findByName" parameterType="string" resultType="com.selectamp.api.core.domain.CommunityKindsCodeEntity">
         SELECT
             name
