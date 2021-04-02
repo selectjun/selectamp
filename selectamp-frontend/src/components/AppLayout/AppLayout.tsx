@@ -48,14 +48,17 @@ const headerStyle = css`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
 `;
 
 const sideStyle = css`
+  background: #ffffff;
   width: 15rem;
   height: calc(100% - 4.5rem);
   position: fixed;
   left: 0;
   top: 4.5rem;
+  z-index: 900;
 `;
 
 const mainStyle = css`
@@ -63,6 +66,7 @@ const mainStyle = css`
   margin-top: 4.5rem;
   margin-left: 15rem;
   padding-bottom: 4.5rem;
+  z-index: 800;
 
   section {
     width: 60rem;
