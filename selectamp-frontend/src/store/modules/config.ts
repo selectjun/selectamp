@@ -10,7 +10,7 @@ export const setCommunityPageMode = createAction(SET_COMMUNITY_PAGE_MODE, (mode:
 type SetCommunityPageModeType = ReturnType<typeof setCommunityPageMode>;
 
 /* STATE TYPE */
-export type PageModeType = "list" | "view" | "write" | "modify";
+export type PageModeType = "list" | "view";
 
 type InitialStateType = {
   mode: PageModeType

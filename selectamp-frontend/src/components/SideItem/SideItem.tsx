@@ -11,7 +11,7 @@ export type SideItemProps = {
 export default function SideItem({ icon, text, to }: SideItemProps) {
   return (
     <li css={sideItemStyle}>
-      <NavLink to={to} exact>
+      <NavLink to={to}>
         <span className="menu-icon"><Icon name={icon} /></span>
         <span className="menu-text">{text}</span>
       </NavLink>
