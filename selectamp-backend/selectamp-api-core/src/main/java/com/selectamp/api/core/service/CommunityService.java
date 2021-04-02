@@ -17,7 +17,7 @@ public class CommunityService {
     private final CommunityMapper communityMapper;
 
     /**
-     * 커뮤니티 저장
+     * 커뮤니티 등록
      * @param communityEntity   커뮤니티 객체
      * @return                  커뮤니티 아이디
      */
@@ -55,11 +55,28 @@ public class CommunityService {
     }
 
     /**
+     * 커뮤니티 조회
+     * @param id    아이디
+     * @return      커뮤니티 객체
+     */
+    public CommunityEntity getCommunity(Long id) {
+        return communityMapper.findById(id);
+    }
+
+    /**
      * 커뮤니티 총 갯수 조회
      * @return  커뮤니티 총 갯수
      */
     public Long countCommunity() {
         return communityMapper.countAll();
+    }
+
+    /**
+     * 커뮤니티 삭제
+     * @param id    아이디
+     */
+    public void deleteCommunity(Long id) {
+        communityMapper.destroyById(id);
     }
 
     /**

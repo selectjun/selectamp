@@ -22,6 +22,12 @@ public interface CommunityMapper {
     public void modify(CommunityEntity communityEntity);
 
     /**
+     * 커뮤니티 삭제
+     * @param id    아이디
+     */
+    public void destroyById(@Param("id") Long id);
+
+    /**
      * 커뮤니티 조회수 증가
      * @param id    커뮤니티 아이디
      */

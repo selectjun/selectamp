@@ -53,7 +53,7 @@ public class CommunityController {
      * @return      커뮤니티 목록
      */
     @GetMapping("/")
-    public ResponseEntity<Object> communication(@RequestParam(value = "page", required = false, defaultValue = "1") Long page) {
+    public ResponseEntity<Object> getCommunities(@RequestParam(value = "page", required = false, defaultValue = "1") Long page) {
         Map<String, Object> response = new HashMap<>();
         Long startId = (page - 1) * countPerPage;
 
@@ -71,6 +71,32 @@ public class CommunityController {
         }
     }
 
+    @GetMapping("/{id}/")
+    public ResponseEntity<Object> getCommunity(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        // [id] 확인
+        if (id == null) {
+            response.put("success", false);
+            response.put("message", "");
+            return ResponseEntity.badRequest().body("[id]가 존재하지 않습니다");
+        }
+
+        // 조회
+        CommunityEntity communityEntity = communityService.getCommunity(id);
+        if (communityEntity == null) {
+            response.put("success", false);
+            response.put("message", "");
+            return ResponseEntity.badRequest().body("데이터가 존재하지 않습니다");
+        }
+
+        response.put("success", true);
+        response.put("community", communityEntity);
+
+        return ResponseEntity.ok().body(response);
+
+    }
+
     /**
      * 커뮤니티 수정
      * @param communityEntity       커뮤니티 객체
@@ -80,7 +106,7 @@ public class CommunityController {
      * @return                      커뮤니티 수정 여부
      */
     @PutMapping("/{id}/")
-    public ResponseEntity<Object> modify(@Valid CommunityEntity communityEntity, Errors errors,
+    public ResponseEntity<Object> updateCommunity(@Valid CommunityEntity communityEntity, Errors errors,
                                          @PathVariable("id") Long id, HttpServletRequest httpServletRequest) {
         Map<String, Object> response = new HashMap<>();
 
@@ -139,7 +165,7 @@ public class CommunityController {
      * @return  성공여부
      */
     @PutMapping("/{id}/viewCount/")
-    public ResponseEntity<Object> increaseViewCount(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> increaseCommunityViewCount(@PathVariable("id") Long id) {
         Map<String, Object> response = new HashMap<>();
 
         try {
@@ -162,7 +188,7 @@ public class CommunityController {
      * @return                      등록 성공 여부
      */
     @PostMapping("/")
-    public ResponseEntity<Object> write(@Valid CommunityEntity communityEntity, Errors errors,
+    public ResponseEntity<Object> insertCommunity(@Valid CommunityEntity communityEntity, Errors errors,
                                         HttpServletRequest httpServletRequest) {
         Map<String, Object> response = new HashMap<>();
 
@@ -205,12 +231,48 @@ public class CommunityController {
         return ResponseEntity.ok().body(response);
     }
 
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<Object> deleteCommunity(@PathVariable Long id, HttpServletRequest httpServletRequest) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 존재 여부 확인
+            if (id == null) {
+                response.put("success", false);
+                response.put("message", "게시물이 존재하지 않습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 권한 확인
+            String token = jwtTokenProvider.resolveToken(httpServletRequest);
+            String userId = jwtTokenProvider.getUserPk(token);
+            if (!communityService.getCommunity(id).getUserId().equals(userId)) {
+                response.put("success", false);
+                response.put("message", "해당 게시물은 삭제 권한이 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 삭제 처리
+            communityService.deleteCommunity(id);
+
+            response.put("success", true);
+            response.put("message", "삭제 성공하였습니다");
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /**
      * 커뮤니티 코드 목록 조회
      * @return  커뮤니티 코드 목록
      */
     @GetMapping("/communityKindsCodeName/")
-    public ResponseEntity<Object> getCommunityKindsCodeNameLList() {
+    public ResponseEntity<Object> getCommunityKindsCodeNames() {
         Map<String, Object> response = new HashMap<>();
 
         try {

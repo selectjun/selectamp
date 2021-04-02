@@ -3,7 +3,9 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 
 import Dashboard from './pages/Dashboard';
 import Pamphlet from './pages/Pamphlet';
-import Community from './pages/Community';
+import CommunityView from './pages/Community/CommunityView';
+import CommunityWrite from './pages/Community/CommunityWrite';
+import CommunityContainer from './containers/Community/CommunityContainer';
 import Guide from './pages/Guide';
 import Notice from './pages/Notice';
 import Login from './pages/Login';
@@ -15,7 +17,9 @@ function App() {
       <Switch>
         <Route path="/dashboard" component={Dashboard} />
         <Route path="/pamphlet" component={Pamphlet} />
-        <Route path="/community" component={Community} />
+        <Route path="/community/write" component={CommunityWrite} />
+        <Route path="/community/:id" component={CommunityView} />
+        <Route path="/community" component={CommunityContainer} />
         <Route path="/guide" component={Guide} />
         <Route path="/notice" component={Notice} />
         <Route path="/login" component={Login} />
