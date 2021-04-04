@@ -1,21 +1,21 @@
 import { css } from '@emotion/react';
-import CommunityBoardBoadyItem, { CommunityType } from './CommunityBoardBoadyItem';
+import CommunityBoardBodyItem from './CommunityBoardBodyItem';
 
 export type CommunityBoardBodyProps = {
-  communities?: Array<CommunityType> | null,
+  communities?: Array<any>,
   totalCount?: number,
   currentPage?: number,
   countPerPage?: number
 };
 
-export default function CommunityBoardBody({ communities, totalCount = 0, currentPage = 1, countPerPage = 10 }: CommunityBoardBodyProps) {
+export default function CommunityBoardBody({ communities, totalCount = 0, currentPage = 1, countPerPage = 20 }: CommunityBoardBodyProps) {
   return (
     <tbody css={communityBoardBodyStyle}>
       {
         communities
         ? communities.map((item, index) => {
           return (
-            <CommunityBoardBoadyItem
+            <CommunityBoardBodyItem
               key={index}
               index={index}
               community={item}

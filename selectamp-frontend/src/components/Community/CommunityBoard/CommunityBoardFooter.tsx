@@ -1,5 +1,5 @@
 import { css } from '@emotion/react';
-import Pagination from '../Pagination';
+import Pagination from '../../Pagination';
 
 export type CommunityBoardFooterProps = {
   totalCount: number | undefined,
@@ -17,6 +17,7 @@ export default function CommunityBoardFooter({ totalCount, currentPage, countPer
         countPerPage={countPerPage} />
     </div>
   );
+  
 };
 
 const communityBoardFooterStyle = css`

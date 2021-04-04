@@ -1,6 +1,6 @@
-export type CommunityBoardColgroupProps = {}
+export type CommunityBoardColGroupProps = {};
 
-export default function CommunityBoardColgroup({}: CommunityBoardColgroupProps) {
+export default function CommunityBoardColGroup({ }: CommunityBoardColGroupProps) {
   return (
     <colgroup>
       <col style={{"width": "96px"}} />
