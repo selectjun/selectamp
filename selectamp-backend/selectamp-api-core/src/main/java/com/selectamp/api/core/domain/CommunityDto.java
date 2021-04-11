@@ -6,11 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CommunityEntity extends TimeEntity {
+@NoArgsConstructor
+public class CommunityDto extends TimeEntity {
 
     /**
      * COMMUNITY_ID
@@ -18,9 +20,9 @@ public class CommunityEntity extends TimeEntity {
     private Long id;
 
     /**
-     * 커뮤니티_코드_이름
+     * 커뮤니티_코드
      */
-    private String communityKindsCodeName;
+    private CommunityKindsCodeEntity communityKindsCode;
 
     /**
      * 제목
@@ -51,6 +53,16 @@ public class CommunityEntity extends TimeEntity {
      */
     @Builder.Default
     private Boolean isTemp = false;
+
+    /**
+     * 생성일시
+     */
+    private LocalDateTime createAt;
+
+    /**
+     * 수정일시
+     */
+    private LocalDateTime updateAt;
 
     /**
      * 등록자

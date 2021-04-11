@@ -1,10 +1,14 @@
 package com.selectamp.api.core.service;
 
+import com.selectamp.api.core.domain.CommunityDto;
 import com.selectamp.api.core.domain.CommunityEntity;
+import com.selectamp.api.core.domain.CommunityKindsCodeEntity;
+import com.selectamp.api.core.mapper.CommunityKindsCodeMapper;
 import com.selectamp.api.core.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,6 +19,11 @@ public class CommunityService {
      * Community Mapper
      */
     private final CommunityMapper communityMapper;
+
+    /**
+     * Community Kinds Code Mapper
+     */
+    private final CommunityKindsCodeMapper communityKindsCodeMapper;
 
     /**
      * 커뮤니티 등록
@@ -50,8 +59,28 @@ public class CommunityService {
      * @param countPerPage  페이지 당 갯수
      * @return              커뮤니티 목록
      */
-    public List<CommunityEntity> getCommunityList(Long startId, Long countPerPage) {
-        return communityMapper.findAll(startId, countPerPage);
+    public List<CommunityDto> getCommunityList(Long startId, Long countPerPage) {
+        List<CommunityEntity> communityEntityList = communityMapper.findAll(startId, countPerPage);
+
+        List<CommunityDto> communityDtoList = new ArrayList<>();
+        for (CommunityEntity communityEntity: communityEntityList) {
+            CommunityKindsCodeEntity communityKindsCodeEntity = communityKindsCodeMapper.findByName(communityEntity.getCommunityKindsCodeName());
+            CommunityDto communityDto = CommunityDto.builder()
+                    .id(communityEntity.getId())
+                    .communityKindsCode(communityKindsCodeEntity)
+                    .title(communityEntity.getTitle())
+                    .contents(communityEntity.getContents())
+                    .viewCount(communityEntity.getViewCount())
+                    .isOpen(communityEntity.getIsOpen())
+                    .isTemp(communityEntity.getIsTemp())
+                    .createAt(communityEntity.getCreateAt())
+                    .updateAt(communityEntity.getUpdateAt())
+                    .userId(communityEntity.getUserId())
+                    .build();
+            communityDtoList.add(communityDto);
+        }
+
+        return communityDtoList;
     }
 
     /**
@@ -59,8 +88,22 @@ public class CommunityService {
      * @param id    아이디
      * @return      커뮤니티 객체
      */
-    public CommunityEntity getCommunity(Long id) {
-        return communityMapper.findById(id);
+    public CommunityDto getCommunity(Long id) {
+        CommunityEntity communityEntity = communityMapper.findById(id);
+        CommunityKindsCodeEntity communityKindsCodeEntity = communityKindsCodeMapper.findByName(communityEntity.getCommunityKindsCodeName());
+        CommunityDto communityDto = CommunityDto.builder()
+                .id(communityEntity.getId())
+                .communityKindsCode(communityKindsCodeEntity)
+                .title(communityEntity.getTitle())
+                .contents(communityEntity.getContents())
+                .viewCount(communityEntity.getViewCount())
+                .isOpen(communityEntity.getIsOpen())
+                .isTemp(communityEntity.getIsTemp())
+                .createAt(communityEntity.getCreateAt())
+                .updateAt(communityEntity.getUpdateAt())
+                .userId(communityEntity.getUserId())
+                .build();
+        return communityDto;
     }
 
     /**

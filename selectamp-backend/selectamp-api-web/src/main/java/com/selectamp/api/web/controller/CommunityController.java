@@ -1,5 +1,6 @@
 package com.selectamp.api.web.controller;
 
+import com.selectamp.api.core.domain.CommunityDto;
 import com.selectamp.api.core.domain.CommunityEntity;
 import com.selectamp.api.core.service.CommunityKindsCodeService;
 import com.selectamp.api.core.service.CommunityService;
@@ -71,6 +72,11 @@ public class CommunityController {
         }
     }
 
+    /**
+     * 커뮤니티 조회
+     * @param id 커뮤니티 아이디
+     * @return
+     */
     @GetMapping("/{id}/")
     public ResponseEntity<Object> getCommunity(@PathVariable("id") Long id) {
         Map<String, Object> response = new HashMap<>();
@@ -83,15 +89,15 @@ public class CommunityController {
         }
 
         // 조회
-        CommunityEntity communityEntity = communityService.getCommunity(id);
-        if (communityEntity == null) {
+        CommunityDto communityDto = communityService.getCommunity(id);
+        if (communityDto == null) {
             response.put("success", false);
             response.put("message", "");
             return ResponseEntity.badRequest().body("데이터가 존재하지 않습니다");
         }
 
         response.put("success", true);
-        response.put("community", communityEntity);
+        response.put("community", communityDto);
 
         return ResponseEntity.ok().body(response);
 
