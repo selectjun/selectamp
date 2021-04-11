@@ -1,13 +1,17 @@
 import { css } from '@emotion/react';
+import { useState } from 'react';
 import CommunityHeader from '../CommunityHeader';
 import CommunityForm from '../CommunityForm';
+import { CommunityType } from '../CommunityForm/CommunityForm';
 
 export type CommunityWriterProps = { };
 
 export default function CommunityWriter({ }: CommunityWriterProps) {
+  const [community, setCommunity] = useState<CommunityType>();
+
   return (
     <section css={communityWriteStyle}>
-      <CommunityHeader title="Writing" url={"/community"} />
+      <CommunityHeader title="새 글쓰기" subTitle="목록" url={"/community"} />
       <hr />
       <CommunityForm />
     </section>
@@ -18,42 +22,4 @@ const communityWriteStyle = css`
   width: 60rem;
   margin: 0 auto;
   padding-top: 2rem;
-  
-  .contents-header {
-    height: 6rem;
-    &> div {
-      float: left;
-
-      &:first-of-type {
-        cursor: pointer;
-        svg {
-          width: 2rem;
-          height: 2rem;
-        }
-      }
-
-      &:last-of-type {
-        padding-left: 1.25rem;
-
-        .prev-page-title {
-          height: 2rem;
-          line-height: 2rem;
-          font-weight: bold;
-        }
-
-        .page-title {
-          margin: 0.725rem 0 0;
-        }
-      }
-    }
-
-    &:after {
-      content: " ";
-      display: block;
-      clear: both;
-    }
-  }
-
-  hr {
-  }
 `;

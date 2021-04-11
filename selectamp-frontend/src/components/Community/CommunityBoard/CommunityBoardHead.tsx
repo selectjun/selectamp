@@ -7,11 +7,11 @@ export default function CommunityBoardHead({}: CommunityBoardHeadProps) {
     <thead css={communityBoardHeadStyle}>
       <tr>
         <th>No.</th>
-        <th>Kinds</th>
-        <th>Title</th>
-        <th>Register</th>
-        <th>Create At</th>
-        <th>View</th>
+        <th>분류</th>
+        <th>제목</th>
+        <th>등록자</th>
+        <th>생성일시</th>
+        <th>조회수</th>
       </tr>
     </thead>
   );

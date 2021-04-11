@@ -24,7 +24,7 @@ export default function CommunityBoardBody({ communities, totalCount = 0, curren
               countPerPage={countPerPage} />
           );
         })
-        : <tr className="none"><td colSpan={7}>Data is null.</td></tr>
+        : <tr className="none"><td colSpan={7}>데이터가 존재하지 않습니다.</td></tr>
       }
     </tbody>
   );

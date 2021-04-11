@@ -2,9 +2,14 @@ import { css } from '@emotion/react';
 import { Link } from 'react-router-dom';
 import dateFormat from 'dateformat';
 
+export type CommunityKindsCode = {
+  name: string,
+  description: string
+};
+
 export type CommunityType = {
   id: number,
-  communityKindsCodeName: string,
+  communityKindsCode: CommunityKindsCode,
   title: string,
   userId: string,
   createAt: Date,
@@ -23,7 +28,7 @@ export default function CommunityBoardBodyItem({ index, community, totalCount = 
   return (
     <tr css={communityBoardBodyItemStyle}>
       <td>{(totalCount - (countPerPage * (currentPage - 1))) - index}</td>
-      <td>{community.communityKindsCodeName}</td>
+      <td>{community.communityKindsCode.description}</td>
       <td><Link to={`/community/${community.id}`}>{community.title}</Link></td>
       <td>{community.userId}</td>
       <td>{dateFormat(new Date(community.createAt), "yyyy-mm-dd HH:MM:ss")}</td>

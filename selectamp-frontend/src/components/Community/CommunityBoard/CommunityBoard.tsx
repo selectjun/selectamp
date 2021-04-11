@@ -29,9 +29,9 @@ export default function CommunityBoard({ page = 1 }: CommunityBoardProps) {
   return (
     <article css={communityBoardStyle}>
       <section>
-        <h2 className="page-title">Community</h2>
+        <h2 className="page-title">커뮤니티</h2>
         <div className="button-group">
-          <a type="button" className="button blue"onClick={() => { history.push("/community/write")}}>Write</a>
+          <a type="button" className="button blue"onClick={() => { history.push("/community/write")}}>새 글쓰기</a>
         </div>
         <hr />
 
