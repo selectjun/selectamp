@@ -22,7 +22,10 @@ export default function Pagination({ url, totalCount = 0, currentPage = 1, count
 
   for (let page = startPageNumber; page <= endPageNumber; page++) { pageNumberItems.push(page); };
 
-  const handleMoveScrollPageTop = (): void => { window.scrollTo(0, 0); }
+  const handleMoveScrollPageTop = (e: React.MouseEvent<HTMLElement>): void => {
+    const target = e.target as HTMLElement;
+    if (target.tagName === "A")  window.scrollTo(0, 0);
+  }
 
   return (
     pageNumberItems.length

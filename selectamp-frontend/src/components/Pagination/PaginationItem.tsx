@@ -5,7 +5,7 @@ export type PaginationItemProps = {
   url: string,
   paginationNumber: number,
   isActive: boolean,
-  onHandleMoveScrollPageTop: () => void
+  onHandleMoveScrollPageTop: (e: React.MouseEvent<HTMLElement>) => void
 };
 
 export default function PaginationItem({ url, paginationNumber, isActive, onHandleMoveScrollPageTop }: PaginationItemProps) {
