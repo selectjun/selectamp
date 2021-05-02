@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.selectamp.api.core.mapper.CommunityCommentMapper">
+
+    <insert id="save" parameterType="com.selectamp.api.core.domain.CommunityCommentEntity"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO community_comment (
+            community_id
+            <if test="parentCommentId != '' and parentCommentId != null">, parent_comment_id</if>
+            , contents
+            , create_at
+            , update_at
+            , user_id
+        ) VALUES (
+            #{communityId}
+            <if test="parentCommentId != '' and parentCommentId != null">, #{parentCommentId}</if>
+            , #{contents}
+            , NOW()
+            , NOW()
+            , #{userId}
+        )
+    </insert>
+
+    <delete id="destroyById" parameterType="long">
+        DELETE FROM
+            community_comment
+        WHERE
+            id = #{id}
+    </delete>
+
+    <select id="findAllWithChildCommentCountByCommunityId" parameterType="long" resultType="com.selectamp.api.core.domain.CommunityCommentDto">
+        SELECT
+            id
+            , community_id
+            , parent_comment_id
+            , (
+                SELECT
+                    COUNT(*)
+                FROM
+                    community_comment AS b
+                WHERE
+                    a.id = b.parent_comment_id
+                    AND
+                    parent_comment_id IS NOT NULL
+            ) AS child_comment_count
+            , contents
+            , create_at
+            , update_at
+            , user_id
+        FROM
+            community_comment AS a
+        WHERE
+            community_id = #{communityId}
+            AND
+            parent_comment_id IS NULL
+        ORDER BY
+            create_at DESC
+            , id DESC
+        LIMIT
+            #{startId}, #{commentCountPerPage}
+    </select>
+
+    <select id="findAllByCommunityIdAndParentCommentId"
+            resultType="com.selectamp.api.core.domain.CommunityCommentDto">
+        SELECT
+            id
+             , community_id
+             , parent_comment_id
+             , contents
+             , create_at
+             , update_at
+             , user_id
+        FROM
+            community_comment
+        WHERE
+            community_id = #{communityId}
+          AND
+            parent_comment_id = #{parentCommentId}
+          AND
+            parent_comment_id IS NOT NULL
+        ORDER BY
+            create_at DESC
+               , id DESC
+        LIMIT
+            #{startId}, #{commentCountPerPage}
+    </select>
+
+    <select id="findOneById" parameterType="long" resultType="com.selectamp.api.core.domain.CommunityCommentEntity">
+        SELECT
+            id
+            , community_id
+            , parent_comment_id
+            , contents
+            , create_at
+            , update_at
+            , user_id
+        FROM
+            community_comment
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="countByCommunityId" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            community_comment
+        WHERE
+            community_id = #{communityId}
+            AND
+            parent_comment_id IS NULL
+    </select>
+
+</mapper>

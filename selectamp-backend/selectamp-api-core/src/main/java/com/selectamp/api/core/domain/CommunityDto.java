@@ -43,6 +43,12 @@ public class CommunityDto extends TimeEntity {
     private Long viewCount = 0L;
 
     /**
+     * 댓글수
+     */
+    @Builder.Default
+    private Long commentCount = 0L;
+
+    /**
      * 공개여부
      */
     @Builder.Default

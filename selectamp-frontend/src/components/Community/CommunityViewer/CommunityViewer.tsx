@@ -23,6 +23,7 @@ export type CommunityType = {
   createAt: Date,
   updateAt: Date,
   viewCount: number
+  commentCount: number
 };
 
 export type CommunityViewerProps = {
@@ -54,7 +55,7 @@ export default function CommunityViewer({ id }: CommunityViewerProps) {
       <hr />
       <CommunityInfo community={community} />
       <CommunityContents contents={community.contents} />
-      <CommunityComments />
+      <CommunityComments id={id} />
     </section>
     : null
   );

@@ -3,6 +3,7 @@ package com.selectamp.api.core.service;
 import com.selectamp.api.core.domain.CommunityDto;
 import com.selectamp.api.core.domain.CommunityEntity;
 import com.selectamp.api.core.domain.CommunityKindsCodeEntity;
+import com.selectamp.api.core.mapper.CommunityCommentMapper;
 import com.selectamp.api.core.mapper.CommunityKindsCodeMapper;
 import com.selectamp.api.core.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,11 @@ public class CommunityService {
      * Community Kinds Code Mapper
      */
     private final CommunityKindsCodeMapper communityKindsCodeMapper;
+
+    /**
+     * Community Comment Mapper
+     */
+    private final CommunityCommentMapper communityCommentMapper;
 
     /**
      * 커뮤니티 등록
@@ -65,12 +71,14 @@ public class CommunityService {
         List<CommunityDto> communityDtoList = new ArrayList<>();
         for (CommunityEntity communityEntity: communityEntityList) {
             CommunityKindsCodeEntity communityKindsCodeEntity = communityKindsCodeMapper.findByName(communityEntity.getCommunityKindsCodeName());
+            Long commentCount = communityCommentMapper.countByCommunityId(communityEntity.getId());
             CommunityDto communityDto = CommunityDto.builder()
                     .id(communityEntity.getId())
                     .communityKindsCode(communityKindsCodeEntity)
                     .title(communityEntity.getTitle())
                     .contents(communityEntity.getContents())
                     .viewCount(communityEntity.getViewCount())
+                    .commentCount(commentCount)
                     .isOpen(communityEntity.getIsOpen())
                     .isTemp(communityEntity.getIsTemp())
                     .createAt(communityEntity.getCreateAt())
@@ -91,12 +99,14 @@ public class CommunityService {
     public CommunityDto getCommunity(Long id) {
         CommunityEntity communityEntity = communityMapper.findById(id);
         CommunityKindsCodeEntity communityKindsCodeEntity = communityKindsCodeMapper.findByName(communityEntity.getCommunityKindsCodeName());
+        Long commentCount = communityCommentMapper.countByCommunityId(communityEntity.getId());
         CommunityDto communityDto = CommunityDto.builder()
                 .id(communityEntity.getId())
                 .communityKindsCode(communityKindsCodeEntity)
                 .title(communityEntity.getTitle())
                 .contents(communityEntity.getContents())
                 .viewCount(communityEntity.getViewCount())
+                .commentCount(commentCount)
                 .isOpen(communityEntity.getIsOpen())
                 .isTemp(communityEntity.getIsTemp())
                 .createAt(communityEntity.getCreateAt())

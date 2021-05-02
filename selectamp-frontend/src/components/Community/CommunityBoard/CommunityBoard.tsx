@@ -5,6 +5,7 @@ import CommunityBoardColGroup from './CommunityBoardColGroup';
 import CommunityBoardHead from './CommunityBoardHead';
 import CommunityBoardBody from './CommunityBoardBody';
 import CommunityBoardFooter from './CommunityBoardFooter';
+import Loding from '../../Loding';
 import { API } from '../../axios';
 
 export type CommunityBoardProps = {
@@ -27,7 +28,8 @@ export default function CommunityBoard({ page = 1 }: CommunityBoardProps) {
   }, [page]);
   
   return (
-    <article css={communityBoardStyle}>
+    communities.length
+    ? <article css={communityBoardStyle}>
       <section>
         <h2 className="page-title">커뮤니티</h2>
         <div className="button-group">
@@ -51,6 +53,7 @@ export default function CommunityBoard({ page = 1 }: CommunityBoardProps) {
           countPerPage={countPerPage} />
       </section>
     </article>
+    : <article css={communityBoardStyle}><Loding style={{ marginTop: "12rem" }} /></article>
   );
 };
 

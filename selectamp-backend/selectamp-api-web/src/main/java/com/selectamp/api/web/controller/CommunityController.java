@@ -1,7 +1,9 @@
 package com.selectamp.api.web.controller;
 
+import com.selectamp.api.core.domain.CommunityCommentEntity;
 import com.selectamp.api.core.domain.CommunityDto;
 import com.selectamp.api.core.domain.CommunityEntity;
+import com.selectamp.api.core.service.CommunityCommentService;
 import com.selectamp.api.core.service.CommunityKindsCodeService;
 import com.selectamp.api.core.service.CommunityService;
 import com.selectamp.api.core.util.ValidationProvider;
@@ -33,6 +35,11 @@ public class CommunityController {
     private final CommunityKindsCodeService communityKindsCodeService;
 
     /**
+     * Community Comment Service
+     */
+    private final CommunityCommentService communityCommentService;
+
+    /**
      * JWT Token Provider
      */
     private final JwtTokenProvider jwtTokenProvider;
@@ -45,7 +52,12 @@ public class CommunityController {
     /**
      * 페이지 당 갯수
      */
-    private Long countPerPage = 20L;
+    private final static Long countPerPage = 20L;
+
+    /**
+     * 페이지 당 댓글 갯수
+     */
+    private final static Long commentCountPerPage = 5L;
 
 
     /**
@@ -237,6 +249,12 @@ public class CommunityController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * 커뮤니티 삭제
+     * @param id
+     * @param httpServletRequest
+     * @return
+     */
     @DeleteMapping("/{id}/")
     public ResponseEntity<Object> deleteCommunity(@PathVariable Long id, HttpServletRequest httpServletRequest) {
         Map<String, Object> response = new HashMap<>();
@@ -245,7 +263,7 @@ public class CommunityController {
             // 존재 여부 확인
             if (id == null) {
                 response.put("success", false);
-                response.put("message", "게시물이 존재하지 않습니다");
+                response.put("message", communityCommentService);
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -290,6 +308,172 @@ public class CommunityController {
             response.put("success", false);
             response.put("message", "에러가 발생하였습니다.");
 
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 커뮤니티 댓글 등록
+     * @param communityCommentEntity    커뮤니티 댓글 객체
+     * @return                          성공여부
+     */
+    @PostMapping("/comment/")
+    public ResponseEntity<Object> insertCommunityComments(CommunityCommentEntity communityCommentEntity, HttpServletRequest httpServletRequest) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 사용자 조회
+            String token = jwtTokenProvider.resolveToken(httpServletRequest);
+            String userId = jwtTokenProvider.getUserPk(token);
+            if (userId.equals("") && userId == null) {
+                response.put("success", false);
+                response.put("message", "사용자가 존재하지 않습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+            communityCommentEntity.setUserId(userId);
+
+            Long parentCommentId = communityCommentEntity.getParentCommentId();
+            if (parentCommentId != null) {
+                Boolean isParentCommentId = communityCommentService.getCommentById(parentCommentId).getParentCommentId() != null;
+                if (isParentCommentId) {
+                    response.put("success", false);
+                    response.put("message", "최대 2 Depth까지만 등록이 가능합니다");
+                    return ResponseEntity.badRequest().body(response);
+                }
+            }
+
+            Long communityCommentId = communityCommentService.insertCommunityComment(communityCommentEntity);
+            if (communityCommentId == null) {
+                response.put("success", false);
+                response.put("message", "댓글 등록에 실패하였습니다");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+
+            response.put("success", true);
+            response.put("comment", communityCommentService.getCommentById(communityCommentId));
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 커뮤니티 댓글 목록 조회
+     * @param communityId
+     * @return
+     */
+    @GetMapping("/comment/communityId/{communityId}/")
+    public ResponseEntity<Object> getCommunityCommentList(@PathVariable("communityId") Long communityId
+            , @RequestParam(value = "commentPage", defaultValue = "1") Long commentPage) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (communityId == null) {
+                response.put("success", false);
+                response.put("message", "[communityId]가 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Long startId = (commentPage - 1) * commentCountPerPage;
+
+            response.put("success", true);
+            response.put("parentCommentCount", communityCommentService.getParentCommentCountByCommunityId(communityId));
+            response.put("comments", communityCommentService.getCommentList(communityId, startId, commentCountPerPage));
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     *
+     * @param id
+     * @return
+     */
+    @GetMapping("/comment/{id}/")
+    public ResponseEntity<Object> getComment(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (id == null) {
+                response.put("success", false);
+                response.put("message", "[id]가 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            response.put("success", true);
+            response.put("message", "성공하였습니다");
+            response.put("comment", communityCommentService.getCommentById(id));
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 자식 커뮤니티 댓글 목록 조회
+     * @param communityId
+     * @return
+     */
+    @GetMapping("/comment/communityId/{communityId}/{parentCommentId}/")
+    public ResponseEntity<Object> getCommunityCommentChildList(@PathVariable("communityId") Long communityId
+            , @PathVariable("parentCommentId") Long parentCommentId
+            , @RequestParam(value = "commentPage", defaultValue = "1") Long commentPage) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (communityId == null) {
+                response.put("success", false);
+                response.put("message", "[communityId]가 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            } else if (parentCommentId == null) {
+                response.put("success", false);
+                response.put("message", "[parentCommentId]가 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Long startId = (commentPage - 1) * commentCountPerPage;
+
+            response.put("success", true);
+            response.put("commentCountPerPage", commentCountPerPage);
+            response.put("comments", communityCommentService.getCommentChildList(communityId, parentCommentId, startId, commentCountPerPage));
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @DeleteMapping("/comment/{id}/")
+    public ResponseEntity<Object> deleteComment(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (id == null) {
+                response.put("success", false);
+                response.put("message", "[id]가 없습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            communityCommentService.deleteComment(id);
+
+            response.put("success", true);
+            response.put("message", "삭제 성공하였습니다");
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

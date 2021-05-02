@@ -58,7 +58,7 @@ export default function CommunityInfo({ community }: CommunityInfoPrpops) {
         <Icon name="view" /> 
         <span>{community.viewCount}</span>
         <Icon name="comment" />
-        <span> 0</span>
+        <span>{community.commentCount}</span>
       </div>
     </div>
   );

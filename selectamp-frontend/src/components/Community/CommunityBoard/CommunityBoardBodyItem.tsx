@@ -13,7 +13,8 @@ export type CommunityType = {
   title: string,
   userId: string,
   createAt: Date,
-  viewCount: number
+  viewCount: number,
+  commentCount: number
 };
 
 export type CommunityBoardBodyItemProps = {
@@ -29,7 +30,10 @@ export default function CommunityBoardBodyItem({ index, community, totalCount = 
     <tr css={communityBoardBodyItemStyle}>
       <td>{(totalCount - (countPerPage * (currentPage - 1))) - index}</td>
       <td>{community.communityKindsCode.description}</td>
-      <td><Link to={`/community/${community.id}`}>{community.title}</Link></td>
+      <td>
+        <Link to={`/community/${community.id}`}>{community.title}</Link>
+        { community.commentCount ? <span className="comment-count">({community.commentCount})</span> : null }
+      </td>
       <td>{community.userId}</td>
       <td>{dateFormat(new Date(community.createAt), "yyyy-mm-dd HH:MM:ss")}</td>
       <td>{community.viewCount}</td>
@@ -41,5 +45,10 @@ const communityBoardBodyItemStyle = css`
   td {
     padding: 1rem;
     text-align: center;
+
+    span.comment-count {
+      margin-left: 0.5rem;
+      font-size: 0.925rem;
+    }
   }
 `;
