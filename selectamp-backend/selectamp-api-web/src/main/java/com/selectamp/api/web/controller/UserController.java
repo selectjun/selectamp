@@ -3,14 +3,17 @@ package com.selectamp.api.web.controller;
 import com.selectamp.api.core.domain.UserEntity;
 import com.selectamp.api.core.service.UserService;
 import com.selectamp.api.core.util.ValidationProvider;
+import com.selectamp.api.web.config.webSecurity.service.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -30,6 +33,11 @@ public class UserController {
      * Validation Provider
      */
     private final ValidationProvider validationProvider;
+
+    /**
+     * Jwt Token Provider
+     */
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 사용자 회원 가입
@@ -71,6 +79,31 @@ public class UserController {
         }
 
         return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 토큰에서 아이디 가져오기
+     * @param httpServletRequest    요청 객체
+     * @return                      아이디
+     */
+    @GetMapping("/id/")
+    public ResponseEntity<Object> getUserId(HttpServletRequest httpServletRequest) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = jwtTokenProvider.resolveToken(httpServletRequest);
+            String userId = jwtTokenProvider.getUserPk(token);
+            
+            response.put("success", true);
+            response.put("id", userId);
+            
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
 }
