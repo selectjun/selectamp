@@ -113,4 +113,35 @@
         </where>
     </select>
 
+    <select id="countIsTempByUserId" parameterType="string" resultType="java.lang.Long">
+        SELECT
+            COUNT(*)
+        FROM
+            community
+        <where>
+            is_temp = true
+        </where>
+    </select>
+
+    <select id="findAllByIsTempAndUserId" resultType="com.selectamp.api.core.domain.CommunityEntity">
+        SELECT
+            id
+             , community_kinds_code_name
+             , title
+             , contents
+             , view_count
+             , is_open
+             , is_temp
+             , user_id
+             , create_at
+             , update_at
+        FROM
+            community
+        <where>
+            is_temp = #{isTemp}
+            AND
+            user_id = #{userId}
+        </where>
+    </select>
+
 </mapper>

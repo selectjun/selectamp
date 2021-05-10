@@ -6,7 +6,7 @@ export type CommunityContentsProps = {
 
 export default function CommunityContents({ contents }: CommunityContentsProps) {
   return (
-    <div className="post-contents" css={CommunityContenttStye}>{contents}</div>
+    <div className="post-contents" css={CommunityContenttStye} dangerouslySetInnerHTML={{ __html: contents }}></div>
   );
 };
 

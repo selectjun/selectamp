@@ -16,6 +16,13 @@ public interface CommunityMapper {
     public void save(CommunityEntity communityEntity);
 
     /**
+     * 임시 저장 갯수
+     * @param userId    회원 아이디
+     * @return          임시 저장 갯수
+     */
+    public Long countIsTempByUserId(String userId);
+
+    /**
      * 커뮤니티 수정
      * @param communityEntity   커뮤니티 객체
      */
@@ -53,5 +60,13 @@ public interface CommunityMapper {
      * @return  커뮤니티 총 갯수
      */
     public Long countAll();
+
+    /**
+     * 커뮤니티 목록 조회 by isTemp and userId
+     * @param isTemp    임시저장 여부
+     * @param userId    사용자 아이디
+     * @return          커뮤니티 목록
+     */
+    public List<CommunityEntity> findAllByIsTempAndUserId(@Param("isTemp") Boolean isTemp, @Param("userId") String userId);
 
 }

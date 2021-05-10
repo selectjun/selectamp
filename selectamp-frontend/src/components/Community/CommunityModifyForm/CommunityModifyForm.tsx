@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import SunEditor, { buttonList } from 'suneditor-react';
 import { API } from '../../axios';
 
 export type CommunityKindsCodeType = {
@@ -29,8 +30,10 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
   const titleRef = useRef<HTMLInputElement>(null);
   const communityKindsCodeNameRef = useRef<HTMLSelectElement>(null);
   const contentsRef  = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<SunEditor>(null);
 
   const [community, setCommunity] = useState<CommunityType>();
+  const [contents, setContents] = useState<string>("");
   const [communityKindsCodeName, setCommunityKindsCodeName] = useState<Array<CommunityKindsCodeType>>();
 
   useEffect(() => {
@@ -45,6 +48,7 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
       API.get(getCommunityUrl).then(response => {
         if (response.data.success) {
           setCommunity(response.data.community);
+          setContents(response.data.community.contents);
         }
       });
     })();
@@ -73,7 +77,12 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
         ...community,
         [name]: value
       });
-  }
+  };
+
+  const handleSunEditorData = (e: KeyboardEvent ) => {
+    const target = (e.target as HTMLElement);
+    setContents(target.innerHTML);
+  };
 
   const handleComunityForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -90,7 +99,7 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
       alert("내용을 입력해주세요");
       contentsRef.current && contentsRef.current.focus();
     } else if (window.confirm("정말로 수정하시겠습니까?")) {
-      const url = `/api/community/${id}/?title=${community.title}&communityKindsCodeName=${community.communityKindsCode.name}&contents=${community.contents}`;
+      const url = `/api/community/${id}/?title=${community.title}&communityKindsCodeName=${community.communityKindsCode.name}&contents=${contents}`;
       API.put(url).then(response => {
         if (response.data.success) {
           alert(response.data.message);
@@ -126,7 +135,33 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
             </dd>
             <dt><label htmlFor="isOpenY">내용</label></dt>
             {/* TODO: 에디터로 변경 */}
-            <dd><textarea name="contents" id="contents" className="input-textarea" onChange={handleCommunityData} ref={contentsRef} defaultValue={community.contents}></textarea></dd>
+            <dd>
+              {/* <textarea name="contents" id="contents" className="input-textarea" onChange={handleCommunityData} ref={contentsRef} defaultValue={community.contents}></textarea> */}
+              <SunEditor
+                lang="ko"
+                ref={editorRef}
+                name="contetns"
+                setOptions={{
+                  height: 360,
+                  // buttonList: buttonList.complex
+                  buttonList: [
+                    ["undo", "redo"], 
+                    ["font", "fontSize", "formatBlock"], 
+                    ["bold", "underline", "italic", "strike", "subscript", "superscript"],
+                    ["removeFormat"],
+                    ["fontColor", "hiliteColor"],
+                    ["outdent", "indent"],
+                    ["align", "horizontalRule", "list", "table"],
+                    ["link", "image", "video"],
+                    ["showBlocks", "codeView"],
+                    ["preview"],
+                  ]
+                }}
+                onKeyDown={handleSunEditorData}
+                setContents={contents}
+                enableToolbar={true}
+                showToolbar={true} />
+            </dd>
           </dl>
           <div className="button-group">
             <button type="button" className="left white" id="cancelButton"onClick={handleCancelButton}>취소</button>

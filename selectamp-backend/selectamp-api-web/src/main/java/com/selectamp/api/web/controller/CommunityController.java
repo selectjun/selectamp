@@ -85,6 +85,36 @@ public class CommunityController {
     }
 
     /**
+     * 커뮤니티 임시 저장 목록 조회
+     * @param httpServletRequest
+     * @return
+     */
+    @GetMapping("/isTemp/")
+    public ResponseEntity<Object> getCommunities(HttpServletRequest httpServletRequest) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // 사용자 조회
+            String token = jwtTokenProvider.resolveToken(httpServletRequest);
+            String userId = jwtTokenProvider.getUserPk(token);
+            if (userId.equals("") && userId == null) {
+                response.put("success", false);
+                response.put("message", "사용자가 존재하지 않습니다");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            response.put("success", true);
+            response.put("communities", communityService.getCommunityByIsTempAndUserId(true, userId));
+
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            response.put("success", false);
+            response.put("message", "에러가 발생하였습니다");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    /**
      * 커뮤니티 조회
      * @param id 커뮤니티 아이디
      * @return
@@ -233,6 +263,15 @@ public class CommunityController {
             return ResponseEntity.badRequest().body(response);
         }
 
+        // 임시저장 가능 갯수 확인
+        Long saveTempCount = communityService.getSaveTempCount(userId);
+        if (communityEntity.getIsTemp() && saveTempCount >= 10) {
+            response.put("success", false);
+            response.put("saveTempCount", saveTempCount);
+            response.put("message", "최대 10개까지만 임시 저장이 가능합니다.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
         // 등록
         Long id = communityService.insertCommunity(communityEntity);
         if (id == null) {
@@ -244,7 +283,6 @@ public class CommunityController {
         response.put("success", true);
         response.put("id", id);
         response.put("message", "등록하였습니다");
-
 
         return ResponseEntity.ok().body(response);
     }

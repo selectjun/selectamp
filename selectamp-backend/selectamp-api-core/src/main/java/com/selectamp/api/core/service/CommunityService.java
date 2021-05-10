@@ -41,6 +41,10 @@ public class CommunityService {
         return communityEntity.getId();
     }
 
+    public Long getSaveTempCount(String userId) {
+        return communityMapper.countIsTempByUserId(userId);
+    }
+
     /**
      * 커뮤니티 수정
      * @param communityEntity   커뮤니티 객체
@@ -89,6 +93,16 @@ public class CommunityService {
         }
 
         return communityDtoList;
+    }
+
+    /**
+     * 커뮤니티 목록 조회 by isTemp and userId
+     * @param isTemp    임시저장 여부
+     * @param userId    사용자 아이디
+     * @return          커뮤니티 목록
+     */
+    public List<CommunityEntity> getCommunityByIsTempAndUserId(Boolean isTemp, String userId) {
+         return communityMapper.findAllByIsTempAndUserId(isTemp, userId);
     }
 
     /**
