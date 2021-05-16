@@ -42,6 +42,7 @@ export default function CommunityForm({}: CommunityFormProps) {
   const communityKindsCodeNameRef = useRef<HTMLSelectElement>(null);
   const contentsRef  = useRef<HTMLTextAreaElement>(null);
   const editorRef = useRef<SunEditor>(null);
+  const [uploadImageUrls, setUploadImageUrls] = useState<{originalUrl: string, saveUrl: string}[]>();
   const [tempCommunities, setTempCommunities] = useState<Array<CommunityType>>();
   const [communityKindsCodeName, setCommunityKindsCodeName] = useState<Array<CommunityKindsCodeNameType>>();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -58,6 +59,35 @@ export default function CommunityForm({}: CommunityFormProps) {
     const target = (e.target as HTMLElement);
     setContents(target.innerHTML);
   };
+
+  const handleOnImageUploadBefore = async (files: any, info: any, uploadHandler: any) => {
+    let isUploadSuccess: boolean = false;
+
+    try {
+      if (!files.length || files.length > 1) uploadHandler("에러가 발생하였습니다\n 관리자에게 문의주시기 바랍니다");
+      
+      const form = new FormData();
+      form.append('file', files[0])
+      
+      await API.post("/api/file/", form).then(async response => {
+        if (response.data.success) {
+          const result = {
+            result: [{
+              url: response.data.url,
+              name: response.data.name,
+              size: response.data.size
+            }]
+          };
+          await uploadHandler(result);
+          isUploadSuccess = true;
+        }
+      }).catch(error => {
+        uploadHandler("이미지 업로드 중, 에러가 발생하였습니다");
+      });
+    } catch (error) { }
+    
+    return isUploadSuccess;
+  }
 
   const valid = (): boolean => {
     if (!community.title.trim()) {
@@ -81,7 +111,6 @@ export default function CommunityForm({}: CommunityFormProps) {
 
     if (valid() && window.confirm("정말로 등록하시겠습니까?")) {
       const url = `/api/community/?title=${community.title}&communityKindsCodeName=${community.communityKindsCodeName}&contents=${contents}`;
-      console.log(url)
       API.post(url).then(response => {
         if (response.data.success) {
           alert(response.data.message);
@@ -155,7 +184,7 @@ export default function CommunityForm({}: CommunityFormProps) {
               name="contetns"
               setOptions={{
                 height: 360,
-                // buttonList: buttonList.complex
+                // buttonList: buttonList.complex 
                 buttonList: [
                   ["undo", "redo"], 
                   ["font", "fontSize", "formatBlock"], 
@@ -170,6 +199,7 @@ export default function CommunityForm({}: CommunityFormProps) {
                 ]
               }}
               onKeyDown={handleSunEditorData}
+              onImageUploadBefore={handleOnImageUploadBefore}
               setContents={community.contents}
               enableToolbar={true}
               showToolbar={true} />
