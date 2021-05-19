@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router';
+import Editor from '../../Editor';
 import SunEditor, { buttonList } from 'suneditor-react';
 import { API } from '../../axios';
 
@@ -35,24 +36,6 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
   const [community, setCommunity] = useState<CommunityType>();
   const [contents, setContents] = useState<string>("");
   const [communityKindsCodeName, setCommunityKindsCodeName] = useState<Array<CommunityKindsCodeType>>();
-
-  useEffect(() => {
-    (async function asyncWarapper() {
-      const getCommunityKindsCodeUrl = `/api/community/communityKindsCodeName/`;
-      await API.get(getCommunityKindsCodeUrl).then(response => {
-        const { communityKindsCodeNames } = response.data;
-        setCommunityKindsCodeName(communityKindsCodeNames);
-      });
-
-      const getCommunityUrl = `/api/community/${id}/`;
-      API.get(getCommunityUrl).then(response => {
-        if (response.data.success) {
-          setCommunity(response.data.community);
-          setContents(response.data.community.contents);
-        }
-      });
-    })();
-  }, []);
 
   const handleCancelButton = (): void => {
     if (window.confirm("정말로 수정을 취소하시겠습니까?")) {
@@ -95,9 +78,6 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
     } else if (!community.communityKindsCode.name.trim()) {
       alert("분류를 선택해주세요");
       communityKindsCodeNameRef.current && communityKindsCodeNameRef.current.focus();
-    } else if (!community.contents.trim()) {
-      alert("내용을 입력해주세요");
-      contentsRef.current && contentsRef.current.focus();
     } else if (window.confirm("정말로 수정하시겠습니까?")) {
       const url = `/api/community/${id}/?title=${community.title}&communityKindsCodeName=${community.communityKindsCode.name}&contents=${contents}`;
       API.put(url).then(response => {
@@ -110,6 +90,24 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
       });
     }
   }
+
+  useEffect(() => {
+    (async function asyncWarapper() {
+      const getCommunityKindsCodeUrl = `/api/community/communityKindsCodeName/`;
+      await API.get(getCommunityKindsCodeUrl).then(response => {
+        const { communityKindsCodeNames } = response.data;
+        setCommunityKindsCodeName(communityKindsCodeNames);
+      });
+
+      const getCommunityUrl = `/api/community/${id}/`;
+      API.get(getCommunityUrl).then(response => {
+        if (response.data.success) {
+          setCommunity(response.data.community);
+          setContents(response.data.community.contents);
+        }
+      });
+    })();
+  }, []);
 
   return (
     community
@@ -134,33 +132,12 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
               </select>
             </dd>
             <dt><label htmlFor="isOpenY">내용</label></dt>
-            {/* TODO: 에디터로 변경 */}
             <dd>
-              {/* <textarea name="contents" id="contents" className="input-textarea" onChange={handleCommunityData} ref={contentsRef} defaultValue={community.contents}></textarea> */}
-              <SunEditor
-                lang="ko"
-                ref={editorRef}
-                name="contetns"
-                setOptions={{
-                  height: 360,
-                  // buttonList: buttonList.complex
-                  buttonList: [
-                    ["undo", "redo"], 
-                    ["font", "fontSize", "formatBlock"], 
-                    ["bold", "underline", "italic", "strike", "subscript", "superscript"],
-                    ["removeFormat"],
-                    ["fontColor", "hiliteColor"],
-                    ["outdent", "indent"],
-                    ["align", "horizontalRule", "list", "table"],
-                    ["link", "image", "video"],
-                    ["showBlocks", "codeView"],
-                    ["preview"],
-                  ]
-                }}
-                onKeyDown={handleSunEditorData}
-                setContents={contents}
-                enableToolbar={true}
-                showToolbar={true} />
+              <Editor
+                name="contents"
+                editorRef={editorRef}
+                contents={contents}
+                onSetContents={setContents} />
             </dd>
           </dl>
           <div className="button-group">

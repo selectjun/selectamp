@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
+import Editor from '../../Editor';
 import  CommunityTempListModal from './CommunityTempListModal';
 import { API } from '../../axios';
 import SunEditor, { buttonList } from 'suneditor-react';
@@ -40,9 +41,7 @@ export default function CommunityForm({}: CommunityFormProps) {
   const history = useHistory();
   const titleRef = useRef<HTMLInputElement>(null);
   const communityKindsCodeNameRef = useRef<HTMLSelectElement>(null);
-  const contentsRef  = useRef<HTMLTextAreaElement>(null);
   const editorRef = useRef<SunEditor>(null);
-  const [uploadImageUrls, setUploadImageUrls] = useState<{originalUrl: string, saveUrl: string}[]>();
   const [tempCommunities, setTempCommunities] = useState<Array<CommunityType>>();
   const [communityKindsCodeName, setCommunityKindsCodeName] = useState<Array<CommunityKindsCodeNameType>>();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -55,40 +54,6 @@ export default function CommunityForm({}: CommunityFormProps) {
       });
   };
 
-  const handleSunEditorData = (e: KeyboardEvent ) => {
-    const target = (e.target as HTMLElement);
-    setContents(target.innerHTML);
-  };
-
-  const handleOnImageUploadBefore = async (files: any, info: any, uploadHandler: any) => {
-    let isUploadSuccess: boolean = false;
-
-    try {
-      if (!files.length || files.length > 1) uploadHandler("에러가 발생하였습니다\n 관리자에게 문의주시기 바랍니다");
-      
-      const form = new FormData();
-      form.append('file', files[0])
-      
-      await API.post("/api/file/", form).then(async response => {
-        if (response.data.success) {
-          const result = {
-            result: [{
-              url: response.data.url,
-              name: response.data.name,
-              size: response.data.size
-            }]
-          };
-          await uploadHandler(result);
-          isUploadSuccess = true;
-        }
-      }).catch(error => {
-        uploadHandler("이미지 업로드 중, 에러가 발생하였습니다");
-      });
-    } catch (error) { }
-    
-    return isUploadSuccess;
-  }
-
   const valid = (): boolean => {
     if (!community.title.trim()) {
       alert("제목을 입력해주세요");
@@ -98,11 +63,8 @@ export default function CommunityForm({}: CommunityFormProps) {
       alert("분류를 선택해주세요");
       communityKindsCodeNameRef.current && communityKindsCodeNameRef.current.focus();
       return false;
-    } else if (!contents.trim() || !contents.replace(/(<([^>]+)>)/ig,"").trim()) {
-      alert("내용을 입력해주세요");
-      // editorRef.current && editorRef.current.;
-      return false;
     }
+
     return true;
   }
 
@@ -110,7 +72,7 @@ export default function CommunityForm({}: CommunityFormProps) {
     e.preventDefault();
 
     if (valid() && window.confirm("정말로 등록하시겠습니까?")) {
-      const url = `/api/community/?title=${community.title}&communityKindsCodeName=${community.communityKindsCodeName}&contents=${contents}`;
+      const url = `/api/community/?title=${community.title}&communityKindsCodeName=${community.communityKindsCodeName}&contents=${encodeURI(contents)}`;
       API.post(url).then(response => {
         if (response.data.success) {
           alert(response.data.message);
@@ -178,31 +140,11 @@ export default function CommunityForm({}: CommunityFormProps) {
           </dd>
           <dt><label htmlFor="isOpenY">내용</label></dt>
           <dd>
-            <SunEditor
-              lang="ko"
-              ref={editorRef}
-              name="contetns"
-              setOptions={{
-                height: 360,
-                // buttonList: buttonList.complex 
-                buttonList: [
-                  ["undo", "redo"], 
-                  ["font", "fontSize", "formatBlock"], 
-                  ["bold", "underline", "italic", "strike", "subscript", "superscript"],
-                  ["removeFormat"],
-                  ["fontColor", "hiliteColor"],
-                  ["outdent", "indent"],
-                  ["align", "horizontalRule", "list", "table"],
-                  ["link", "image", "video"],
-                  ["showBlocks", "codeView"],
-                  ["preview"],
-                ]
-              }}
-              onKeyDown={handleSunEditorData}
-              onImageUploadBefore={handleOnImageUploadBefore}
-              setContents={community.contents}
-              enableToolbar={true}
-              showToolbar={true} />
+            <Editor
+              name="contents"
+              editorRef={editorRef}
+              contents={contents}
+              onSetContents={setContents} />
           </dd>
         </dl>
         <div className="button-group">

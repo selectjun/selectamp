@@ -70,7 +70,7 @@ public class FileController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
 
-            String url = (siteUrl + "/api/file/" + Long.toString(fileEntity.getId()) + "/").replace("\"", "");
+            String url = (siteUrl + "/api/file/" + Long.toString(fileEntity.getId()) + "/");
 
             response.put("success", true);
             response.put("url", url);

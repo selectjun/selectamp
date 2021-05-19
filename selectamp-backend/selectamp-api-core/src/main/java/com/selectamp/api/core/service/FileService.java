@@ -2,6 +2,7 @@ package com.selectamp.api.core.service;
 
 import com.selectamp.api.core.domain.FileEntity;
 import com.selectamp.api.core.mapper.FileMapper;
+import com.selectamp.api.core.util.filter.FileFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -30,7 +31,6 @@ public class FileService {
      */
     private final FileMapper fileMapper;
 
-
     public FileEntity insertFile(MultipartFile multipartFile, String userId) throws IOException {
         String uploadPath = uploadRootPath;
         File file = new File(uploadPath);
@@ -38,6 +38,8 @@ public class FileService {
         if (!file.isDirectory()) {
             Boolean isMake = file.mkdir();
         }
+
+        FileFilter .badFileExtIsReturnException(multipartFile);
 
         String originalName = multipartFile.getOriginalFilename();
         String extension = originalName.split("\\.")[1];
