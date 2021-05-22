@@ -30,7 +30,6 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
   const history = useHistory();
   const titleRef = useRef<HTMLInputElement>(null);
   const communityKindsCodeNameRef = useRef<HTMLSelectElement>(null);
-  const contentsRef  = useRef<HTMLTextAreaElement>(null);
   const editorRef = useRef<SunEditor>(null);
 
   const [community, setCommunity] = useState<CommunityType>();
@@ -62,11 +61,6 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
       });
   };
 
-  const handleSunEditorData = (e: KeyboardEvent ) => {
-    const target = (e.target as HTMLElement);
-    setContents(target.innerHTML);
-  };
-
   const handleComunityForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -79,7 +73,7 @@ export default function CommunityModifyForm({ id }: CommunityUpdateFormProps) {
       alert("분류를 선택해주세요");
       communityKindsCodeNameRef.current && communityKindsCodeNameRef.current.focus();
     } else if (window.confirm("정말로 수정하시겠습니까?")) {
-      const url = `/api/community/${id}/?title=${community.title}&communityKindsCodeName=${community.communityKindsCode.name}&contents=${contents}`;
+      const url = `/api/community/${id}/?title=${community.title}&communityKindsCodeName=${community.communityKindsCode.name}&contents=${encodeURI(contents)}`;
       API.put(url).then(response => {
         if (response.data.success) {
           alert(response.data.message);

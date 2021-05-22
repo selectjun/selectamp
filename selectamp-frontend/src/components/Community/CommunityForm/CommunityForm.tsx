@@ -88,7 +88,7 @@ export default function CommunityForm({}: CommunityFormProps) {
     e.preventDefault();
 
     if (valid() && window.confirm("정말로 임시저장 하시겠습니까?")) {
-      const url = `/api/community/?title=${community.title}&communityKindsCodeName=${community.communityKindsCodeName}&contents=${contents}&isTemp=true`;
+      const url = `/api/community/?title=${community.title}&communityKindsCodeName=${community.communityKindsCodeName}&contents=${encodeURI(contents)}&isTemp=true`;
       API.post(url).then(response => {
         if (response.data.success) {
           alert(response.data.message);

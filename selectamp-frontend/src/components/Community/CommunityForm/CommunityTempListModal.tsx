@@ -25,6 +25,7 @@ export default function CommunityTempListModal({ contents, modalIsOpen, tempComm
       const loadCommunity = tempCommunities?.filter(item => item.id == id)[0];
   
       loadCommunity && onSetCommunity(loadCommunity);
+      loadCommunity && onSetContents(loadCommunity.contents);
   
       const url = `/api/community/${id}/`;
       await API.delete(url).then(response => {
